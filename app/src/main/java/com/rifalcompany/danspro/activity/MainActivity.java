@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     Button login;
     SignInButton loginGmail;
     private static final String EMAIL = "email";
+    private static final String NAME = "name";
     private GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN;
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             // Menyimpan nilai
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("id_account", "12345");
-            editor.putString("name_account", "Testing");
+            editor.putString("name_account", "Alternative");
             editor.apply();
 
             Intent i = new Intent(MainActivity.this, HomeActivity.class);
@@ -75,13 +76,18 @@ public class MainActivity extends AppCompatActivity {
         /*Facebook*/
         loginFb = findViewById(R.id.btn_fb);
         callbackManager = CallbackManager.Factory.create();
-        loginFb.setReadPermissions(Arrays.asList(EMAIL));
+        loginFb.setReadPermissions(Arrays.asList(EMAIL,NAME));
 
         // Callback registration
         loginFb.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
+                // Menyimpan nilai
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("id_account", String.valueOf(loginFb.getId()));
+                editor.putString("name_account", String.valueOf(loginFb.getTransitionName()));
+                editor.apply();
+
                 Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
             }
 

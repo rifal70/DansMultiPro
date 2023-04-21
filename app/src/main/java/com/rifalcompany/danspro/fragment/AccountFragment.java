@@ -2,6 +2,7 @@ package com.rifalcompany.danspro.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class AccountFragment extends Fragment {
     TextView tvHello, tvId;
     Button btnLogout;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,7 +39,7 @@ public class AccountFragment extends Fragment {
         String id = sharedPreferences.getString("id_account", "");
         String name = sharedPreferences.getString("name_account", "Hello Name");
 
-        tvHello.setText(name);
+        tvHello.setText("Hello, " + name);
         tvId.setText(id);
 
         btnLogout.setOnClickListener(vi -> {

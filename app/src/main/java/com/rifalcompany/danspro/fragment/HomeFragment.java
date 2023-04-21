@@ -86,7 +86,25 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // Handle search query submission
-                Toast.makeText(getActivity(), "" + query, Toast.LENGTH_SHORT).show();
+                /* call api single item */
+                apiService api = apiClient.getClient().create(apiService.class);
+                Call<List<jobModel>> callSingle = api.getSingleItems(searchView.getQuery().toString(), etLoc.getText().toString());
+                callSingle.enqueue(new Callback<List<jobModel>>() {
+                    @Override
+                    public void onResponse(Call<List<jobModel>> callSingle, Response<List<jobModel>> response) {
+                        if (response.isSuccessful()) {
+                            List<jobModel> items = response.body();
+                            itemAdapter = new JobAdapter(items, isFulltime, getActivity());
+                            rvJob.setAdapter(itemAdapter);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<jobModel>> callSingle, Throwable t) {
+                        Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                /* call api single item */
                 return false;
             }
 
