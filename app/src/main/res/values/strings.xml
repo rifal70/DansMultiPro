@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">DansPro</string>
+    <string name="facebook_app_id">717337130137486</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="website_go"><u>Go to Website</u>></string>
+
+<!--    gunakan client oa web application-->
+    <string name="server_client_id">352532428071-qo1ivp9t2vlk86eh1hkgr3906seg0afl.apps.googleusercontent.com</string>
+</resources>
