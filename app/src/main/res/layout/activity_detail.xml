@@ -71,17 +71,19 @@
                 android:id="@+id/tv_company_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
                 android:text="company name"
                 android:textColor="@color/white"
-                android:textSize="14dp" />
+                android:textSize="12dp" />
 
             <TextView
                 android:id="@+id/tv_company_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="3"
                 android:text="company location"
                 android:textColor="@color/white"
-                android:textSize="14dp" />
+                android:textSize="9dp" />
 
             <TextView
                 android:id="@+id/tv_company_website"
@@ -89,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/website_go"
                 android:textColor="@color/blue"
-                android:textSize="14dp"
+                android:textSize="10dp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -97,9 +99,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="5dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_company">
 
@@ -118,12 +121,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_marginTop="5dp"
                 android:background="@color/cardview_dark_background"
                 android:orientation="vertical"
-                android:padding="5dp"
-                android:weightSum="2">
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -169,8 +171,7 @@
                     android:id="@+id/tv_desc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingBottom="75dp"
-                    android:text="Description"
+                    android:text="@string/hello_blank_fragment"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
             </LinearLayout>

@@ -21,4 +21,8 @@ public interface apiService {
     Call<ResponseBody> getDetailItems(
             @Path("id") String id);
 
+    @GET("positions.json")
+    Call<List<jobModel>> getItemsByPage(
+            @Query("page") int page);
+
 }

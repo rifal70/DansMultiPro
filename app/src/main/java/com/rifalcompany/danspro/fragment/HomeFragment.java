@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.rifalcompany.danspro.api.apiClient;
 import com.rifalcompany.danspro.api.apiService;
 import com.rifalcompany.danspro.api.jobModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,6 +42,10 @@ public class HomeFragment extends Fragment {
     private EditText etLoc;
     private Switch btnSwitch;
     private String isFulltime;
+    int pages = 1;
+    List<jobModel> dataList = new ArrayList<>();
+    private ProgressBar progressBar;
+    Boolean flag_loading = false;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -60,6 +66,7 @@ public class HomeFragment extends Fragment {
         btnFilter = view.findViewById(R.id.btn_filter);
         etLoc = view.findViewById(R.id.et_loc);
         btnSwitch = view.findViewById(R.id.switch_button);
+        progressBar = view.findViewById(R.id.progressBar);
 
         ivExpand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,15 +122,20 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        /* call api all item */
+        /* call api page 1 */
         apiService api = apiClient.getClient().create(apiService.class);
-        Call<List<jobModel>> call = api.getItems();
+        Call<List<jobModel>> call = api.getItemsByPage(pages);
         call.enqueue(new Callback<List<jobModel>>() {
             @Override
             public void onResponse(Call<List<jobModel>> call, Response<List<jobModel>> response) {
                 if (response.isSuccessful()) {
                     List<jobModel> items = response.body();
-                    itemAdapter = new JobAdapter(items, "Full Time", getActivity());
+                    int index = items.size() - 1;
+                    for (int i = 0; i <= index; i++) {
+                        dataList.add((new jobModel(items.get(i).getId(), items.get(i).getTitle(), items.get(i).getType(),
+                                items.get(i).getCompany(), items.get(i).getLocation())));
+                    }
+                    itemAdapter = new JobAdapter(dataList, "Full Time", getActivity());
                     rvJob.setAdapter(itemAdapter);
                 }
             }
@@ -133,7 +145,70 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-        /* call api all item */
+        /* call api page 1 */
+
+        rvJob.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvJob.setAdapter(itemAdapter);
+
+        rvJob.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                        .findLastCompletelyVisibleItemPosition();
+                int totalItemCount = itemAdapter.getItemCount();
+
+                if (lastVisibleItemPosition == (totalItemCount - 1)) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    if (flag_loading = true) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    pages++;
+                    /* call api item pagination */
+                    apiService api = apiClient.getClient().create(apiService.class);
+                    Call<List<jobModel>> call = api.getItemsByPage(pages);
+                    call.enqueue(new Callback<List<jobModel>>() {
+                        @Override
+                        public void onResponse(Call<List<jobModel>> call, Response<List<jobModel>> response) {
+                            if (response.isSuccessful()) {
+                                // Biar ga ke index 0
+                                recyclerView.getLayoutManager().scrollToPosition(lastVisibleItemPosition);
+
+                                // Atur visibility menjadi GONE saat loading selesai
+                                flag_loading = true;
+                                progressBar.setVisibility(View.GONE);
+
+                                List<jobModel> items = response.body();
+                                int size = items.size();
+                                if (size != 0) {
+                                    int index = items.size() - 1;
+                                    for (int i = 0; i <= index; i++) {
+                                        if (items.get(i) != null) {
+                                            dataList.add((new jobModel(items.get(i).getId(), items.get(i).getTitle(), items.get(i).getType(),
+                                                    items.get(i).getCompany(), items.get(i).getLocation())));
+                                        }
+                                    }
+                                    itemAdapter = new JobAdapter(dataList, "Full Time", getActivity());
+                                    rvJob.setAdapter(itemAdapter);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<jobModel>> call, Throwable t) {
+                            // Atur visibility menjadi GONE saat loading selesai
+                            flag_loading = true;
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    /* call api item pagination */
+                }
+            }
+        });
+
 
         btnFilter.setOnClickListener(v -> {
             /* call api single item */
